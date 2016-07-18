@@ -45,7 +45,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chat.cs" />
-    <Compile Include="Message.cs" />
+    <Compile Include="Messages\CLEARCHAT.cs" />
+    <Compile Include="Messages\IMessage.cs" />
+    <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\NOTICE.cs" />
+    <Compile Include="Messages\PRVMSG.cs" />
+    <Compile Include="Messages\ROOMSTATE.cs" />
+    <Compile Include="Messages\USERNOTICE.cs" />
+    <Compile Include="Messages\USERSTATE.cs" />
     <Compile Include="Twitch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

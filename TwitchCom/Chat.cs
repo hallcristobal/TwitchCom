@@ -3,11 +3,13 @@ using System.IO;
 using System;
 using System.Text;
 using System.Collections.Generic;
+using TwitchCom.Messages;
 
 namespace TwitchCom
 {
     public class Chat
     {
+
         private TcpClient tcpClient;
         private StreamReader inputStream;
         private StreamWriter outputStream;
@@ -47,7 +49,7 @@ namespace TwitchCom
                 {
                     sendIrcMessage("PONG: tmi.twitch.tv");
                     Message output = new Message();
-                    output.ID = Message.Type.NONE;
+                    output.Type = Messages.Type.PONG;
                     output.Raw = message;
                     return output;
                 }
@@ -57,7 +59,7 @@ namespace TwitchCom
             catch(Exception e)
             {
                 Message output = new Message();
-                output.ID = Message.Type.EXCEPTION;
+                output.Type = Messages.Type.EXCEPTION;
                 output.Raw = e.ToString();
                 output.User = "Exception";
                 output.Value = String.Empty;
@@ -65,6 +67,9 @@ namespace TwitchCom
             }
         }
 
+        /// <summary>
+        /// Parses message from IRC server
+        /// </summary>
         private Message parseMessage(string raw)
         {
             /*
@@ -74,96 +79,102 @@ namespace TwitchCom
                 @badges=broadcaster/1;color=#000000;display-name=C_MidKnight;emotes=;id=f2d2917b-b433-4494-afa3-d2be17c00240;mod=1;room-id=52956221;subscriber=0;turbo=0;user-id=52956221;user-type=mod :c_midknight!c_midknight@c_midknight.tmi.twitch.tv PRIVMSG #c_midknight :OK
             */
 
-            char temp;
-            
-            bool nameParsed = false;
-            bool messageType = false;
-            bool atMessage = false;
-
             Message output = new Message();
-            StringBuilder sBuilder = new StringBuilder();
-            output.Raw = raw;
+            #region no
+            /*
 
-            if (raw != null)
-            {
-                for (int x = 0; x < raw.Length; x++)
-                {
-                    temp = raw[x];
-                    //Parse Name
-                    if (temp.Equals('!') && !nameParsed && x < raw.Length - 1)
-                    {
-                        x++;
-                        temp = raw[x];
-                        while (!temp.Equals('@') && x < raw.Length - 1)
+                        char temp;
+
+                        bool nameParsed = false;
+                        bool messageType = false;
+                        bool atMessage = false;
+
+                        StringBuilder sBuilder = new StringBuilder();
+                        output.Raw = raw;
+
+                        if (raw != null)
                         {
-                            sBuilder.Append(temp);
-                            //temp = raw[x];
-                            x++;
-                            if (x < raw.Length)
+                            for (int x = 0; x < raw.Length; x++)
                             {
                                 temp = raw[x];
+                                //Parse Name
+                                if (temp.Equals('!') && !nameParsed && x < raw.Length - 1)
+                                {
+                                    x++;
+                                    temp = raw[x];
+                                    while (!temp.Equals('@') && x < raw.Length - 1)
+                                    {
+                                        sBuilder.Append(temp);
+                                        //temp = raw[x];
+                                        x++;
+                                        if (x < raw.Length)
+                                        {
+                                            temp = raw[x];
+                                        }
+                                    }
+
+                                    output.User = sBuilder.ToString();
+                                    sBuilder.Clear();
+                                    nameParsed = true;
+                                }
+
+                                if (temp.Equals(' ') && !messageType && x < raw.Length -1)
+                                {
+                                    x++;
+                                    temp = raw[x];
+                                    while (!temp.Equals(' ') && x < raw.Length - 1)
+                                    {
+
+                                        sBuilder.Append(temp);
+                                        //temp = raw[x];
+                                        x++;
+                                        if (x < raw.Length)
+                                        {
+                                            temp = raw[x];
+                                        }
+                                    }
+                                    output.Type = GetType(sBuilder.ToString());
+                                    sBuilder.Clear();
+                                    messageType = true;
+                                }
+
+                                //Parse Message
+                                //if ((temp.Equals(':') && serverParsed && nameParsed && messageType) || atMessage)
+                                if ((temp.Equals(':') && messageType) ||　atMessage)
+                                {
+                                    atMessage = true;
+                                    x++;
+                                    while (x < raw.Length)
+                                    {
+                                        if (x < raw.Length)
+                                        {
+                                            temp = raw[x];
+                                        }
+                                        sBuilder.Append(temp);
+                                        //temp = raw[x];
+                                        x++;
+                                    }
+                                    output.Value = sBuilder.ToString();
+                                    sBuilder.Clear();
+                                }
                             }
                         }
 
-                        output.User = sBuilder.ToString();
-                        sBuilder.Clear();
-                        nameParsed = true;
-                    }
-
-                    if (temp.Equals(' ') && !messageType && x < raw.Length -1)
-                    {
-                        x++;
-                        temp = raw[x];
-                        while (!temp.Equals(' ') && x < raw.Length - 1)
-                        {
-
-                            sBuilder.Append(temp);
-                            //temp = raw[x];
-                            x++;
-                            if (x < raw.Length)
-                            {
-                                temp = raw[x];
-                            }
-                        }
-                        output.ID = GetType(sBuilder.ToString());
-                        sBuilder.Clear();
-                        messageType = true;
-                    }
-
-                    //Parse Message
-                    //if ((temp.Equals(':') && serverParsed && nameParsed && messageType) || atMessage)
-                    if ((temp.Equals(':') && messageType) ||　atMessage)
-                    {
-                        atMessage = true;
-                        x++;
-                        while (x < raw.Length)
-                        {
-                            if (x < raw.Length)
-                            {
-                                temp = raw[x];
-                            }
-                            sBuilder.Append(temp);
-                            //temp = raw[x];
-                            x++;
-                        }
-                        output.Value = sBuilder.ToString();
-                        sBuilder.Clear();
-                    }
-                }
-            }
+            */
+            #endregion
             return output;
 
         }
 
-        private Message.Type GetType(string raw)
+        private Messages.Type GetType(string raw)
         {
-            foreach(Message.Type t in Enum.GetValues(typeof(Message.Type)))
+            foreach(Messages.Type t in Enum.GetValues(typeof(Messages.Type)))
             {
                 if (raw == t.ToString())
                     return t;
             }
 
-            return Message.Type.NONE;
+            return Messages.Type.NONE;
         }
 
         public void joinChannel()

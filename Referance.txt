@@ -1,0 +1,86 @@
+split_raw w/o tags:
+	:c_midknight!c_midknight@c_midknight.tmi.twitch.tv
+	PRIVMSG
+	#c_midknight
+	:OK
+split_tags:
+	[staff, admin, global_mod, moderator, subscriber and turbo]
+	@badges=staff/1,bits/1000
+	bits=100
+	color=#000000
+	display-name=C_MidKnight
+	emotes=
+	id=f2d2917b-b433-4494-afa3-d2be17c00240
+	mod=1
+	room-id=52956221
+	subscriber=0
+	turbo=0
+	user-id=52956221
+	user-type=mod
+
+
+//////////////////////////////////////////////////////////////////////////////
+All tags by message type:
+//////////////////////////////////////////////////////////////////////////////
+
+NOTICE
+subs_on					This room is now in subscribers-only mode.
+already_subs_on			This room is already in subscribers-only mode.
+subs_off				This room is no longer in subscribers-only mode.
+already_subs_off		This room is not in subscribers-only mode.
+slow_on					This room is now in slow mode. You may send messages every slow_duration seconds.
+slow_off				This room is no longer in slow mode.
+r9k_on					This room is now in r9k mode.
+already_r9k_on			This room is already in r9k mode.
+r9k_off					This room is no longer in r9k mode.
+already_r9k_off			This room is not in r9k mode.
+host_on					Now hosting target_channel.
+bad_host_hosting		This channel is already hosting target_channel.
+host_off				Exited host mode.
+hosts_remaining			number host commands remaining this half hour.
+emote_only_on			This room is now in emote-only mode.
+already_emote_only_on	This room is already in emote-only mode.
+emote_only_off			This room is no longer in emote-only mode.
+already_emote_only_off	This room is not in emote-only mode.
+msg_channel_suspended	This channel has been suspended.
+timeout_success			target_user has been timed out for ban_duration seconds.
+ban_success				target_user is now banned from this room.
+unban_success			target_user is no longer banned from this room.
+bad_unban_no_ban		target_user is not banned from this room.
+already_banned			target_user is already banned in this room.
+unrecognized_cmd		Unrecognized command: command
+
+PRIVMSG
+badges
+color
+display-name
+??????????????emotes
+id
+mod
+subscriber
+turbo
+room-id
+user-id
+user-type
+bits
+
+USERSTATE : PRIVMSG
+emote-sets
+
+GLOBALUSERSTATE : USERSTATE
+
+ROOMSTATE
+broadcaster-lang
+r9k
+subs-only
+slow
+
+USERNOTICE : PRIVMSG
+msg-id
+msg-param-months
+system-msg
+login
+
+CLEARCHAT
+ban-duration
+ban-reason

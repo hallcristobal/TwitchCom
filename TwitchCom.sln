@@ -5,6 +5,11 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchCom", "TwitchCom\TwitchCom.csproj", "{3681E8D8-4D86-47FB-AF82-12986C76616A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{229917CA-31ED-4890-8A89-084D112CA5FE}"
+	ProjectSection(SolutionItems) = preProject
+		Referance.txt = Referance.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
