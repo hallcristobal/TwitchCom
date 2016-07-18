@@ -25,6 +25,6 @@
         Type Type { get; set; }
         string Raw { get; set; }
 
-        void ParseMessage(string raw);
+        void ParseTags(string raw);
     }
 }

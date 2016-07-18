@@ -9,5 +9,10 @@ namespace TwitchCom.Messages
     public class USERSTATE : PRVMSG
     {
         public string emote_sets { get; set; }
+
+        public USERSTATE()
+        {
+            Type = Type.USERSTATE;
+        }
     }
 }

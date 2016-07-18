@@ -27,7 +27,7 @@ namespace TwitchCom.Messages
             Type = Type.PRIVMSG;
         }
 
-        public override void ParseMessage(string raw)
+        public override void ParseTags(string raw)
         {
             
         }

@@ -18,7 +18,7 @@ namespace TwitchCom.Messages
             Type = Type.NONE;
         }
 
-        public virtual void ParseMessage(string raw)
+        public virtual void ParseTags(string raw)
         {
             
         }

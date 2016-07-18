@@ -21,6 +21,7 @@ namespace TwitchCom
             twitch = _t;
             tcpClient = new TcpClient();
             tcpClient.Connect("irc.chat.twitch.tv", 6667);
+
             if (tcpClient.Connected)
                 Connected = true;
             else
@@ -28,6 +29,7 @@ namespace TwitchCom
                 Connected = false;
                 return;
             }
+
             inputStream = new StreamReader(tcpClient.GetStream());
             outputStream = new StreamWriter(tcpClient.GetStream());
 
@@ -67,101 +69,81 @@ namespace TwitchCom
             }
         }
 
-        /// <summary>
-        /// Parses message from IRC server
-        /// </summary>
         private Message parseMessage(string raw)
         {
-            /*
-                :rinku249!rinku249@rinku249.tmi.twitch.tv PRIVMSG #cosmowright :SOO CLOSE
-                :subbie_!subbie_@subbie_.tmi.twitch.tv PRIVMSG #abahbob :somethiong like that
-                :tmi.twitch.tv NOTICE #c_midknight :This room is no longer in slow mode.
-                @badges=broadcaster/1;color=#000000;display-name=C_MidKnight;emotes=;id=f2d2917b-b433-4494-afa3-d2be17c00240;mod=1;room-id=52956221;subscriber=0;turbo=0;user-id=52956221;user-type=mod :c_midknight!c_midknight@c_midknight.tmi.twitch.tv PRIVMSG #c_midknight :OK
-            */
+            // 0 - tags, 1 - name; 2 - type, 3 - channel, 4 - message
+            string[] split_raw = raw.Split(' ');
+            Messages.Type type = Messages.Type.NONE;
+            Message output;
 
-            Message output = new Message();
-            #region no
-            /*
+            for (int i = 0; i < split_raw.Length; i++)
+            {
+                if (Char.IsLetter(split_raw[i][0]))
+                {
+                    type = GetType(split_raw[i]);
+                    break;
+                }
+            }
 
-                        char temp;
+            switch (type)
+            {
+                case Messages.Type.PRIVMSG:
+                    PRVMSG pv_ret = new PRVMSG();
+                    pv_ret.ParseTags(split_raw[0]);
+                    output = pv_ret;
+                    break;
+                case Messages.Type.NOTICE:
+                    NOTICE note_ret = new NOTICE();
+                    note_ret.ParseTags(split_raw[0]);
+                    output = note_ret;
+                    break;
 
-                        bool nameParsed = false;
-                        bool messageType = false;
-                        bool atMessage = false;
 
-                        StringBuilder sBuilder = new StringBuilder();
-                        output.Raw = raw;
+                case Messages.Type.HOSTTARGET:
+                    // TODO: HOSTTARGET Class
+                    output = new Message();
+                    output.Type = Messages.Type.RECONNECT;
+                    break;
 
-                        if (raw != null)
-                        {
-                            for (int x = 0; x < raw.Length; x++)
-                            {
-                                temp = raw[x];
-                                //Parse Name
-                                if (temp.Equals('!') && !nameParsed && x < raw.Length - 1)
-                                {
-                                    x++;
-                                    temp = raw[x];
-                                    while (!temp.Equals('@') && x < raw.Length - 1)
-                                    {
-                                        sBuilder.Append(temp);
-                                        //temp = raw[x];
-                                        x++;
-                                        if (x < raw.Length)
-                                        {
-                                            temp = raw[x];
-                                        }
-                                    }
 
-                                    output.User = sBuilder.ToString();
-                                    sBuilder.Clear();
-                                    nameParsed = true;
-                                }
+                case Messages.Type.CLEARCHAT:
+                    CLEARCHAT clr_ret = new CLEARCHAT();
+                    clr_ret.ParseTags(split_raw[0]);
+                    output = clr_ret;
+                    break;
+                case Messages.Type.USERSTATE:
+                    USERSTATE usr_ret = new USERSTATE();
+                    usr_ret.ParseTags(split_raw[0]);
+                    output = usr_ret;
+                    break;
 
-                                if (temp.Equals(' ') && !messageType && x < raw.Length -1)
-                                {
-                                    x++;
-                                    temp = raw[x];
-                                    while (!temp.Equals(' ') && x < raw.Length - 1)
-                                    {
 
-                                        sBuilder.Append(temp);
-                                        //temp = raw[x];
-                                        x++;
-                                        if (x < raw.Length)
-                                        {
-                                            temp = raw[x];
-                                        }
-                                    }
-                                    output.Type = GetType(sBuilder.ToString());
-                                    sBuilder.Clear();
-                                    messageType = true;
-                                }
+                case Messages.Type.RECONNECT:
+                    // TODO: Reconnect Code
+                    output = new Message();
+                    output.Type = type;
+                    break;
 
-                                //Parse Message
-                                //if ((temp.Equals(':') && serverParsed && nameParsed && messageType) || atMessage)
-                                if ((temp.Equals(':') && messageType) ||　atMessage)
-                                {
-                                    atMessage = true;
-                                    x++;
-                                    while (x < raw.Length)
-                                    {
-                                        if (x < raw.Length)
-                                        {
-                                            temp = raw[x];
-                                        }
-                                        sBuilder.Append(temp);
-                                        //temp = raw[x];
-                                        x++;
-                                    }
-                                    output.Value = sBuilder.ToString();
-                                    sBuilder.Clear();
-                                }
-                            }
-                        }
 
-            */
-            #endregion
+                case Messages.Type.USERNOTICE:
+                    USERNOTICE usrn_ret = new USERNOTICE();
+                    usrn_ret.ParseTags(split_raw[0]);
+                    output = usrn_ret;
+                    break;
+                case Messages.Type.ROOMSTATE:
+                    ROOMSTATE rs_ret = new ROOMSTATE();
+                    rs_ret.ParseTags(split_raw[0]);
+                    output = rs_ret;
+                    break;
+                default:
+                    output = new Message();
+                    output.Type = type;
+                    break;
+            }
+
+            output.Raw = raw;
+            output.User = split_raw[split_raw.Length - 3];
+            output.Value = split_raw[split_raw.Length - 1];
             return output;
 
         }
