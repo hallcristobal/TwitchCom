@@ -21,7 +21,7 @@ namespace TwitchCom.Messages
         public string Room_Id       { get; set; }
         public string User_Id       { get; set; }
         public string User_Type     { get; set; }
-        public string Bits          { get; set; }
+        public int Bits          { get; set; }
         public PRVMSG()
         {
             Type = Type.PRIVMSG;
@@ -43,16 +43,24 @@ namespace TwitchCom.Messages
             }
 
             Badges = tags[1];
-            Color = ColorTranslator.FromHtml(tags[3]);
-            Display_Name = tags[5];
-            Emotes = tags[7];
-            Id = tags[9];
-            Mod = tags[11] == "1" ? true : false;
-            Room_Id = tags[13];
-            Subscriber = tags[15] == "1" ? true : false;
-            Turbo = tags[17] == "1" ? true : false;
-            User_Id = tags[19];
-            User_Type = tags[21];
+
+            int i = 3;
+            if(tags[3] == "bits")
+            {
+                i += 2;
+                Bits = Int32.Parse(tags[4]);
+            }
+
+            Color = ColorTranslator.FromHtml(tags[i]);
+            Display_Name = tags[i+2];
+            Emotes = tags[i+4];
+            Id = tags[i+6];
+            Mod = tags[i+8] == "1" ? true : false;
+            Room_Id = tags[i+10];
+            Subscriber = tags[i+12] == "1" ? true : false;
+            Turbo = tags[i+14] == "1" ? true : false;
+            User_Id = tags[i+16];
+            User_Type = tags[i+18];
         }
     }
 }
