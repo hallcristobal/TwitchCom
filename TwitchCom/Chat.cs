@@ -3,18 +3,20 @@ using System.IO;
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TwitchCom.Messages;
 
 namespace TwitchCom
 {
     public class Chat
     {
-
         private TcpClient tcpClient;
         private StreamReader inputStream;
         private StreamWriter outputStream;
         private Twitch twitch;
+
         private bool connected = false;
+
         public bool Connected { get { return connected; } }
         public bool RequestTags { get; set; } = false;
         public bool RequestCommands { get; set; } = false;
@@ -25,7 +27,6 @@ namespace TwitchCom
         {
             twitch = _t;
             tcpClient = new TcpClient();
-            Connect();
         }
 
         public void Connect()
@@ -44,8 +45,11 @@ namespace TwitchCom
             outputStream = new StreamWriter(tcpClient.GetStream());
 
             outputStream.WriteLine("PASS " + twitch.OAuth);
+            Debug.WriteLine("Wrote Oauth");
             outputStream.WriteLine("NICK " + twitch.UserName);
+            Debug.WriteLine("Wrote nick");
             outputStream.WriteLine("USER " + twitch.UserName + " 8 * :" + twitch.UserName);
+            Debug.WriteLine("Wrote user name");
 
             if (RequestMembership || RequestAll)
                 outputStream.WriteLine("CAP REQ :twitch.tv/membership");
@@ -57,7 +61,7 @@ namespace TwitchCom
 
         public void ReConnect()
         {
-            if(Connected)
+            if (Connected)
             {
                 tcpClient.Close();
                 connected = false;
@@ -68,6 +72,10 @@ namespace TwitchCom
 
         public Message readMessage()
         {
+            //Message ret = new Message();
+            //ret.Raw = inputStream.ReadLine();
+            //string ret = inputStream.ReadLine();
+            //return ret;
             try
             {
                 string message = inputStream.ReadLine();
@@ -83,13 +91,13 @@ namespace TwitchCom
 
                 return parseMessage(message);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Message output = new Message();
                 output.Type = Messages.Type.EXCEPTION;
                 output.Raw = e.ToString();
                 output.User = "Exception";
-                output.Value = String.Empty;
+                output.Value = e.Source.ToString();
                 return output;
             }
         }
@@ -99,6 +107,8 @@ namespace TwitchCom
             // 0 - tags, 1 - name; 2 - type, 3 - channel, 4 - message
             string[] split_raw = raw.Split(' ');
             Messages.Type type = Messages.Type.NONE;
+            int type_i = 0;
+            string value = "";
             Message output;
 
             for (int i = 0; i < split_raw.Length; i++)
@@ -106,9 +116,18 @@ namespace TwitchCom
                 if (Char.IsLetter(split_raw[i][0]))
                 {
                     type = GetType(split_raw[i]);
+                    type_i = i + 2;
                     break;
                 }
             }
+
+            for (int i = type_i; i < split_raw.Length; i++)
+            {
+                value += split_raw[i] + " ";
+            }
+
+            if(value.Length > 1)
+                value = value.Remove(0, 1);
 
             if (RequestTags || RequestAll)
             {
@@ -167,7 +186,7 @@ namespace TwitchCom
                         output.Type = type;
                         break;
                 }
-                output.User = split_raw[split_raw.Length - 3];
+                output.User = split_raw[1].Remove(0, 1).Split('!')[0];
             }
             else
             {
@@ -177,14 +196,14 @@ namespace TwitchCom
 
             output.Type = type;
             output.Raw = raw;
-            output.Value = split_raw[split_raw.Length - 1].Remove(0, 1);
+            output.Value = value;
             return output;
 
         }
 
         private Messages.Type GetType(string raw)
         {
-            foreach(Messages.Type t in Enum.GetValues(typeof(Messages.Type)))
+            foreach (Messages.Type t in Enum.GetValues(typeof(Messages.Type)))
             {
                 if (raw == t.ToString())
                     return t;
@@ -197,6 +216,7 @@ namespace TwitchCom
         {
             sendIrcMessage("JOIN #" + twitch.Channel);
         }
+
         public void joinChannel(string channel)
         {
             twitch.Channel = channel.ToLower();
@@ -208,7 +228,6 @@ namespace TwitchCom
             outputStream.WriteLine(message);
             outputStream.Flush();
         }
-
 
     }
 }
