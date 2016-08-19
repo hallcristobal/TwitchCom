@@ -92,3 +92,6 @@ ban-reason
 :tmi.twitch.tv NOTICE #c_midknight :This room is no longer in slow mode.
 @badges=broadcaster/1;color=#000000;display-name=C_MidKnight;emotes=;id=f2d2917b-b433-4494-afa3-d2be17c00240;mod=1;room-id=52956221;subscriber=0;turbo=0;user-id=52956221;user-type=mod :c_midknight!c_midknight@c_midknight.tmi.twitch.tv PRIVMSG #c_midknight :OK
 
+@broadcaster-lang=;emote-only=0;r9k=0;slow=20;subs-only=0 :tmi.twitch.tv ROOMSTATE #c_midknight
+@msg-id=slow_off :tmi.twitch.tv NOTICE #c_midknight :This room is no longer in slow mode.
+@slow=0 :tmi.twitch.tv ROOMSTATE #c_midknight

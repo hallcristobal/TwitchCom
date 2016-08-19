@@ -30,17 +30,8 @@ namespace TwitchCom.Messages
         public override void ParseTags(string raw)
         {
             // @badges=broadcaster/1;color=#000000;display-name=C_MidKnight;emotes=;id=f2d2917b-b433-4494-afa3-d2be17c00240;mod=1;room-id=52956221;subscriber=0;turbo=0;user-id=52956221;user-type=mod
-            if (!raw.StartsWith("@"))
-                return;
 
-            raw = raw.Remove(0, 1);
-            string[] raw_split = raw.Split(';');
-
-            List<string> tags = new List<string>();
-            foreach (var s in raw_split)
-            {
-                tags.AddRange(s.Split('='));
-            }
+            var tags = SplitTags(raw);
 
             Badges = tags[1];
 

@@ -8,12 +8,20 @@ namespace TwitchCom.Messages
 {
     class CLEARCHAT : Message
     {
-        public string ban_duration { get; set; }
-        public string ban_reason { get; set; }
+        private string _banDuration;
+        private string _banReason;
+
+        public string ban_duration { get { return _banDuration; } }
+        public string ban_reason { get { return _banReason; } }
 
         public CLEARCHAT()
         {
             Type = Type.CLEARCHAT;
+        }
+
+        public override void ParseTags(string raw)
+        {
+            
         }
     }
 }
