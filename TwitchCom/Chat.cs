@@ -13,19 +13,21 @@ namespace TwitchCom
         private TcpClient tcpClient;
         private StreamReader inputStream;
         private StreamWriter outputStream;
-        private Twitch twitch;
+        private TwitchUser twitch;
 
         private bool connected = false;
+        private string channel = String.Empty;
 
         public bool Connected { get { return connected; } }
+        public string Channel { get { return channel; } }
         public bool RequestTags { get; set; } = false;
         public bool RequestCommands { get; set; } = false;
         public bool RequestMembership { get; set; } = false;
         public bool RequestAll { get; set; } = false;
 
-        public Chat(Twitch _t)
+        public Chat(TwitchUser _TwitchUser)
         {
-            twitch = _t;
+            twitch = _TwitchUser;
             tcpClient = new TcpClient();
         }
 
@@ -128,56 +130,48 @@ namespace TwitchCom
 
             if(value.Length > 1)
                 value = value.Remove(0, 1);
-
             if (RequestTags || RequestAll)
             {
+                #region TagParse
                 switch (type)
                 {
                     case Messages.Type.PRIVMSG:
-                        PRVMSG pv_ret = new PRVMSG();
+                        PrvMsg pv_ret = new PrvMsg();
                         pv_ret.ParseTags(split_raw[0]);
                         output = pv_ret;
                         break;
                     case Messages.Type.NOTICE:
-                        NOTICE note_ret = new NOTICE();
+                        Notice note_ret = new Notice();
                         note_ret.ParseTags(split_raw[0]);
                         output = note_ret;
                         break;
-
-
                     case Messages.Type.HOSTTARGET:
                         // TODO: HOSTTARGET Class
                         output = new Message();
                         output.Type = Messages.Type.RECONNECT;
                         break;
-
-
                     case Messages.Type.CLEARCHAT:
-                        CLEARCHAT clr_ret = new CLEARCHAT();
+                        ClearChat clr_ret = new ClearChat();
                         clr_ret.ParseTags(split_raw[0]);
                         output = clr_ret;
                         break;
                     case Messages.Type.USERSTATE:
-                        USERSTATE usr_ret = new USERSTATE();
+                        UserState usr_ret = new UserState();
                         usr_ret.ParseTags(split_raw[0]);
                         output = usr_ret;
                         break;
-
-
                     case Messages.Type.RECONNECT:
                         // TODO: Reconnect Code
                         output = new Message();
                         output.Type = type;
                         break;
-
-
                     case Messages.Type.USERNOTICE:
-                        USERNOTICE usrn_ret = new USERNOTICE();
+                        UserNotice usrn_ret = new UserNotice();
                         usrn_ret.ParseTags(split_raw[0]);
                         output = usrn_ret;
                         break;
                     case Messages.Type.ROOMSTATE:
-                        ROOMSTATE rs_ret = new ROOMSTATE();
+                        RoomState rs_ret = new RoomState();
                         rs_ret.ParseTags(split_raw[0]);
                         output = rs_ret;
                         break;
@@ -187,16 +181,20 @@ namespace TwitchCom
                         break;
                 }
                 output.User = split_raw[1].Remove(0, 1).Split('!')[0];
+                #endregion
             }
             else
             {
                 output = new Message();
                 output.User = split_raw[0].Remove(0, 1).Split('!')[0];
             }
-
+            
             output.Type = type;
             output.Raw = raw;
-            output.Value = value;
+            if (value.Length > 1)
+                output.Value = value.Remove(value.Length - 1, 1);
+            else
+                output.Value = value;
             return output;
 
         }
@@ -212,21 +210,22 @@ namespace TwitchCom
             return Messages.Type.NONE;
         }
 
-        public void joinChannel()
-        {
-            sendIrcMessage("JOIN #" + twitch.Channel);
-        }
-
         public void joinChannel(string channel)
         {
-            twitch.Channel = channel.ToLower();
-            sendIrcMessage("JOIN #" + twitch.Channel);
+            this.channel = channel.ToLower();
+            sendIrcMessage("JOIN #" + Channel);
         }
 
         public void sendIrcMessage(string message)
         {
             outputStream.WriteLine(message);
             outputStream.Flush();
+        }
+        public void sendChatMessage(string message)
+        {
+            sendIrcMessage(":" + twitch.UserName + "!" + twitch.UserName + "@" + twitch.UserName
+                + ".tmi.twitch.tv PRIVMSG #" + Channel + " :" + message);
+            Console.WriteLine(message);
         }
 
     }

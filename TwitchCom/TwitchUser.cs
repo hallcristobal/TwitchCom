@@ -6,17 +6,10 @@ using System.Threading.Tasks;
 
 namespace TwitchCom
 {
-    public class Twitch
+    public class TwitchUser
     {
-        private string _channel;
         private string _username;
         private string _oauth;
-
-        public string Channel
-        {
-            get { return _channel; }
-            set { _channel = value.ToLower(); }
-        }
         public string UserName
         {
             get { return _username; }
@@ -28,11 +21,10 @@ namespace TwitchCom
             set { _oauth = value; }
         }
         
-        public Twitch(string _userName, string _oAuth, string _channel)
+        public TwitchUser(string _userName, string _oAuth)
         {
             this._username = _userName.ToLower();
             this._oauth = _oAuth;
-            this._channel = _channel.ToLower();
         }
     }
 }

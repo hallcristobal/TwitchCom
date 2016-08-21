@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace TwitchCom.Messages
 {
-    public class NOTICE : Message
+    public class Notice : Message
     {
-        public NOTICE()
+        public Notice()
         {
-            Type = Type.NOTICE;
+            _type = Type.NOTICE;
         }
     }
 }

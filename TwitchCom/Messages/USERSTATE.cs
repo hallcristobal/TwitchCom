@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace TwitchCom.Messages
 {
-    public class USERSTATE : PRVMSG
+    public class UserState : PrvMsg
     {
-        public string emote_sets { get; set; }
+        private string _emote_sets;
+        public string emote_sets { get { return _emote_sets; } }
 
-        public USERSTATE()
+        public UserState()
         {
-            Type = Type.USERSTATE;
+            _type = Type.USERSTATE;
         }
     }
 }

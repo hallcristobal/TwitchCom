@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TwitchCom.Messages
 {
-    public class ROOMSTATE : Message
+    public class RoomState : Message
     {
         public enum ROOM_CHANGE
         {
@@ -16,19 +16,18 @@ namespace TwitchCom.Messages
             SLOW
         }
         private ROOM_CHANGE _change;
-        private string _Change_Value;
+        private string _change_ammount;
 
         public ROOM_CHANGE Change { get { return _change; } }
-        public string Change_Value { get { return _Change_Value; } }
+        public string ChangeAmmount { get { return _change_ammount; } }
 
-        public ROOMSTATE()
+        public RoomState()
         {
-            Type = Type.ROOMSTATE;
+            _type = Type.ROOMSTATE;
         }
 
         public override void ParseTags(string raw)
         {
-            //TODO (cris) if statements for tags
             var tags = SplitTags(raw);
 
             if (tags[0] == "slow")
@@ -40,7 +39,7 @@ namespace TwitchCom.Messages
             else if (tags[0] == "broadcaster_lang")
                 _change = ROOM_CHANGE.LANGUAGE;
                 
-            _Change_Value = tags[1];
+            _change_ammount = tags[1];
 
 
         }

@@ -6,16 +6,21 @@ using System.Threading.Tasks;
 
 namespace TwitchCom.Messages
 {
-    public class USERNOTICE : PRVMSG
+    public class UserNotice : PrvMsg
     {
-        public string msg_id { get; set; }
-        public string msg_param_months { get; set; }
-        public string system_msg { get; set; }
-        public string login { get; set; }
+        private string _msg_id;
+        private string _msg_param_months;
+        private string _system_msg;
+        private string _login;
 
-        public USERNOTICE()
+        public string MsgId { get { return _msg_id; } }
+        public string msg_param_months { get { return _msg_param_months; } }
+        public string system_msg { get { return _system_msg; } }
+        public string login { get { return _login; } }
+
+        public UserNotice()
         {
-            Type = Type.USERNOTICE;
+            _type = Type.USERNOTICE;
         }
     }
 }

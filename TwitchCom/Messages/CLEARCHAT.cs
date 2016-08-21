@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace TwitchCom.Messages
 {
-    class CLEARCHAT : Message
+    class ClearChat : Message
     {
         private string _banDuration;
         private string _banReason;
 
-        public string ban_duration { get { return _banDuration; } }
-        public string ban_reason { get { return _banReason; } }
+        public string BanDuration { get { return _banDuration; } }
+        public string BanReason { get { return _banReason; } }
 
-        public CLEARCHAT()
+        public ClearChat()
         {
-            Type = Type.CLEARCHAT;
+            _type = Type.CLEARCHAT;
         }
 
         public override void ParseTags(string raw)

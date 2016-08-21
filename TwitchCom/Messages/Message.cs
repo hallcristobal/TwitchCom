@@ -8,14 +8,19 @@ namespace TwitchCom.Messages
 {
     public class Message : IMessage
     {
-        public string Value { get; set; }
-        public string User { get; set; }
-        public Type Type { get; set; }
-        public string Raw { get; set; }
+        protected string _value;
+        protected string _user;
+        protected Type _type;
+        protected string _raw;
+
+        public string Value { get { return _value; } set { _value = value; } }
+        public string User { get { return _user; } set { _user = value; } }
+        public Type Type { get { return _type; } set { _type = value; } }
+        public string Raw { get { return _raw; } set { _raw = value; } }
 
         public Message()
         {
-            Type = Type.NONE;
+            _type = Type.NONE;
         }
 
         public virtual void ParseTags(string raw)
@@ -23,7 +28,7 @@ namespace TwitchCom.Messages
             
         }
 
-        public virtual List<string> SplitTags(string raw)
+        protected List<string> SplitTags(string raw)
         {
             if (!raw.StartsWith("@"))
                 return null;
