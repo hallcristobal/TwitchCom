@@ -35,9 +35,7 @@ namespace TwitchCom
         {
             tcpClient.Connect("irc.chat.twitch.tv", 6667);
 
-            if (tcpClient.Connected)
-                connected = true;
-            else
+            if(!tcpClient.Connected)
             {
                 connected = false;
                 return;
@@ -47,11 +45,8 @@ namespace TwitchCom
             outputStream = new StreamWriter(tcpClient.GetStream());
 
             outputStream.WriteLine("PASS " + twitch.OAuth);
-            Debug.WriteLine("Wrote Oauth");
             outputStream.WriteLine("NICK " + twitch.UserName);
-            Debug.WriteLine("Wrote nick");
             outputStream.WriteLine("USER " + twitch.UserName + " 8 * :" + twitch.UserName);
-            Debug.WriteLine("Wrote user name");
 
             if (RequestMembership || RequestAll)
                 outputStream.WriteLine("CAP REQ :twitch.tv/membership");
@@ -59,6 +54,16 @@ namespace TwitchCom
                 outputStream.WriteLine("CAP REQ :twitch.tv/commands");
             if (RequestTags || RequestAll)
                 outputStream.WriteLine("CAP REQ :twitch.tv/tags");
+
+            if (tcpClient.Connected)
+                connected = true;
+        }
+
+        public void Disconnect()
+        {
+            tcpClient.GetStream().Close();
+            if(!tcpClient.Connected)
+                connected = false;
         }
 
         public void ReConnect()
